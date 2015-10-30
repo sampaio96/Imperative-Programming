@@ -1,0 +1,23 @@
+#use <string>
+
+void test() {
+
+  stack S = stack_new();
+
+  assert (stack_empty(S));
+
+  push(S,"who");
+
+  assert (! stack_empty(S));
+
+  push(S,"nose");
+
+  assert (stack_length(S) == 2);
+
+  assert (! stack_empty(S));
+
+  assert (string_equal(pop(S),"nose"));
+
+  assert (string_equal(pop(S),"who"));
+
+}

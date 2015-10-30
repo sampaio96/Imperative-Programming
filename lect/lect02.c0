@@ -1,0 +1,129 @@
+int some_expressions() {
+
+/*  Expressions are grouped into _types_, 
+    and evaluate to _values_.
+*/
+
+/* booleans */
+
+true; 
+false;
+true && true;
+true && false;
+true || false;
+! true;
+true == false;
+true == true;
+true != false;
+
+/* integers */
+
+3;
+
+3 + 2;
+
+3 - 4;
+
+-1; 
+
+4 * 2;
+
+// / (integer division) and % (mod)
+// n = d * (n / d) + n % d
+
+4 / 2;
+5 / 2;
+
+5 % 2;
+
+5 == 5;
+5 == 4;
+5 != 4;
+
+5 <= 4;
+4 <= 5;
+
+// 5 == true; // type error 
+
+/* strings */ 
+
+"hi!";
+
+/* characters */
+
+'h';
+
+return 0;
+}
+
+
+// ----------------------------------------------------------------------
+
+/* Statements or commands are executed for their effect on the world */
+int some_commands() {
+
+// ----------------------------------------
+// Every expression is a statement
+// evaluates e, and discards the result.
+
+4;
+
+// ----------------------------------------
+// Assignable/variable declartion:
+// makes a box in memory named x containing 0
+
+int x = 0;
+bool y;  // must be filled in before its used
+
+// ----------------------------------------
+// Assignment:
+// changes the contents of a box
+
+x = 3;
+
+// Variables can be used in expressions
+
+x + 10;
+
+// The same expression will evaluate to different values
+// if the contents of memory changes.
+
+x = 5;
+x + 10;
+
+// common pattern: update a variable to some new value that
+// is based on its old value.
+// FIRST evaluate the right-hand side
+// THEN update the memory
+
+x = x + 1;
+
+
+// ----------------------------------------
+// Conditionals: 
+// To execute 
+//      if e then { ss1 } else { ss2 }
+// evaluate e.
+// if it evalutes to true, execute ss1
+// if it evaluates to false, execute ss2
+
+string s = "";
+
+if (x == 1) {
+  s = "st";
+}
+else if (x == 2) {
+  s = "nd";
+}
+else if (x == 3) {
+  s = "rd";
+}
+else {
+  s = "th";
+}
+
+
+return 1;
+}
+
+

@@ -1,0 +1,71 @@
+
+#use <conio>
+
+void send(int[] A,int len) {
+  
+  for (int i = 0; i < len; i = i + 1)
+    {
+      printint(A[i]);
+      print(" ");
+    }
+  println("");
+  
+}
+
+void process_heartbeat(int[] request) 
+//@requires \length(request) > 0;
+//@requires request[0] + 1 == \length(request);
+// therefore request[0] >= 0;
+{
+
+  int payload = request[0];
+
+  int[] buffer = alloc_array(int, 1 + payload);
+  
+  buffer[0] = payload;
+
+  for (int i = 0; i < payload; i = i + 1)
+    //@loop_invariant 0 <= i;
+  {
+    buffer[i+1] = request[i+1];
+  }
+  
+  send(buffer,1+payload);
+
+}
+
+void g(int[] request, int actual_length_of_request)
+//@requires \length(request) == actual_length_of_request;
+{
+  if (request[0] + 1 == actual_length_of_request) {
+    process_heartbeat(request);
+  }
+}
+
+void good() {
+
+  int[] r = alloc_array(int,11);
+  r[0] = 10;
+  r[1] = 18;
+
+  //  process_heartbeat1(r); //,11);
+
+}
+
+void bad() {
+
+  int[] r = alloc_array(int,3);
+  r[0] = 10;
+  r[1] = 4;
+  r[2] = 3;
+
+  process_heartbeat(r);
+
+}
+
+int main() {
+  good();
+  bad();
+
+  return 0;
+}

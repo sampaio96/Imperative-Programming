@@ -1,0 +1,89 @@
+bool is_in(int x, int[] A, int lower, int upper)
+/*@requires 0 <= lower 
+         && lower <= upper 
+         && upper <= \length(A); @*/
+{
+  for (int i = lower; i < upper; i++) 
+    //@loop_invariant lower <= i && i <= upper;
+    {
+      if (x == A[i]) return true;
+    }
+
+  return false;
+}
+
+bool is_sorted(int[] A, 
+               int lower, 
+               int upper)
+/*@requires 0 <= lower 
+         && lower <= upper 
+         && upper <= \length(A); @*/
+{
+  for(int i = lower; i < upper-1; i++)
+    //@loop_invariant lower <= i;
+    {
+      if(!(A[i+1] >= A[i])) return false;
+    }
+
+  return true;
+}
+
+int search(int x, int[] A, int n)
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A, 0, n);
+/*@ensures (\result == -1 && !is_in(x, A, 0, n))
+        || (0 <= \result && \result < n && A[\result] == x); @*/
+{
+  int lower = 0;
+  int upper = n;
+
+  while( lower < upper )
+    //@loop_invariant 0 <= lower && lower <= upper && upper <= n;
+
+    //@loop_invariant lower == 0 || A[lower-1] < x; 
+    // equivalent loop_invariant !is_in(x,A,0,lower);
+
+    //@loop_invariant upper == n || x < A[upper];
+    {
+      int mid = lower + ((upper - lower) / 2); 
+      // also could do mid = (lower + upper) / 2, but see the comments about overflow in the notes
+
+      //@assert lower <= mid && mid < upper;
+      
+      if (A[mid] == x) {
+        return mid ;
+      }
+      else if (x < A[mid]) {
+        upper = mid;
+      }
+      else {
+        //@assert A[mid] < x;
+        lower = mid + 1;
+      }
+        
+
+    }
+
+  return -1;
+
+}
+
+void test_binsearch() {
+
+  int[] A = alloc_array(int,6);
+  A[0] = 0;
+  A[1] = 2;
+  A[2] = 3;
+  A[3] = 7;
+  A[4] = 18;
+  A[5] = 47;
+
+  assert (search(3,A,6) == 2);
+  assert (search(47,A,6) == 5);
+  assert (search(2,A,6) == 1);
+  assert (search(46,A,6) == -1);
+  assert (search(100,A,6) == -1);
+  assert (search(-1,A,6) == -1);
+
+}
+

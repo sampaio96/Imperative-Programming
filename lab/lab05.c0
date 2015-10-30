@@ -1,0 +1,157 @@
+void remove_red(pixel[] A, int width, int height)
+{
+	int length = width * height;
+	for (int i = 0; i < length; i = i + 1)
+	{
+		A[i] = A[i] & 0xFF00FFFF;
+	}
+}
+
+Task 1.1.
+
+width*height	number of steps of computation
+	0					IIII = 4
+	1					IIII IIIII = 9
+	2					IIII IIIII IIIII = 14
+	6					IIII 6*IIIII = 34
+
+/*
+width * height
+int length = Ans
+int i = 0
+compare i < length
+
+	A[i] & 0xFF00FFFF
+	A[i] = Ans
+	i + 1
+	i' = Ans
+	compare i' < length
+
+	repeat if last step is checked
+*/
+
+Task 1.2.
+
+4 + (width*height) * 5
+
+---------------------------
+
+void remove_red (pixel[] A, int width, int height)
+{
+	for (int i = 0; i < height; i = i + 1)
+	{
+		for (int j = 0; j < width; j = j + 1)
+		{
+			A[i*width + j] = A[i*width + j] & 0xFF00FFFF;
+		}
+	}
+}
+
+Task 1.1.
+
+width*height	number of steps of computation
+	0					II = 2
+	1 (1*1)				II II IIIII III = 12	
+	2 (2*1)				II (II IIIII III) (II IIIII III) = 22
+	2 (1*2)				II II (IIIIII) (IIIIII) III = 19
+	6 (3*2)				II 3*(II IIIIII IIIIII III) = 53
+	6 (2*3)				II 2*(II IIIIII IIIIII IIIIII III) = 48
+
+/*
+int i = 0
+compare i < height
+
+	int j = 0
+	compare j < width
+
+		i*width
+		Ans + j
+		A[Ans] & 0xFF00FFFF
+		A[Ans 68] = Ans 69
+		j + 1
+		j' = Ans
+		compare j' < width
+
+		repeat if last step is checked
+	
+	i + 1
+	i' = Ans
+	compare i' < height
+
+	repeat if last step is checked
+*/
+
+6*width*height + 2*height + 2 
+
+
+
+
+------------------------
+
+
+f(n) = 3n^2 + 8n is O(n^2)
+
+if and only if there exists a constant k such that for all x, f(x) ≤ kg(x)
+
+k = 4
+
+
+
+int search(int x, int[] A, int n)
+//@ requires \length(A) == n;
+//@ requires is_sorted(A,0,\length(A));
+/*@ ensures (\result == -1 && ! is_in(x,A,0,\length(A)) ) ||
+(0 <= \result && \result < \length(A) && A[\result] == x); @*/
+{
+	for (int i = 0; i < n; i = i + 1)
+	//@loop_invariant 0 <= i;
+	//@loop_invariant i == 0 || A[i-1] < x;
+	{
+		if (A[i] == x) { return i; }
+		if (A[i] > x) { return -1; }
+	}
+
+	return -1;
+}
+
+it goes n times 2
+
+O(n)
+
+
+int search(int x, int[] A, int n)
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A, 0, n);
+/*@ensures (\result == -1 && !is_in(x, A, 0, n))
+|| (0 <= \result && \result < n && A[\result] == x); @*/
+{
+	int lower = 0;
+	int upper = n;
+	while (lower < upper)
+	//@ loop_invariant 0 <= lower && lower <= upper && upper <= n;
+	//@ loop_invariant lower == 0 || (x > A[lower - 1]);
+	//@ loop_invariant upper == n || x < A[upper];
+	{
+		int mid = lower + (upper - lower) / 2;
+		//@ assert lower <= mid && mid < upper;
+		if (A[mid] == x) {
+			return mid;
+		}
+		else if (A[mid] > x) {
+			upper = mid;
+		}
+		else {
+			lower = mid;
+		}
+	}
+
+	return -1;
+}
+
+
+it goes logn * 3 wtv
+
+O(logn)
+
+
+

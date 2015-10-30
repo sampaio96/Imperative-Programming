@@ -1,0 +1,123 @@
+#use <conio>
+#use <string>
+#use <util>
+
+string show_array(int[] A, int n) {
+
+  string s = "";
+
+  for (int i = 0; i < n; i = i + 1) {
+    if (i != 0) {
+      s = string_join(s,",");
+    }
+    s = string_join(s,string_fromint(A[i]));
+  }
+  
+  return s;
+
+}
+
+void printhex(int x) {
+  println(string_join("0x",int2hex(x)));
+}
+
+void addOne(int[] arr, int size)
+{
+    for (int i = 0; i < size; i++)
+      {
+        arr[i] = arr[i] + 1;  
+      }
+}
+
+void test_addOne() {
+  int[] x = alloc_array(int,4);
+  addOne(x,4);
+  assert (x[0] == 1);
+  assert (x[1] == 1);
+  assert (x[2] == 1);
+  assert (x[3] == 1);
+}
+
+int[] increasing_runs(int num_runs, int run_length) {
+
+  int[] A = alloc_array(int,run_length*num_runs);
+  for (int a = 0; a < num_runs; a ++) {
+    for (int i = 0; i < run_length; i ++) {
+      A[(a*run_length)+i] = a+i;
+    }
+  }
+  return A;
+}
+
+/*
+Task 1.1
+0x000000FF
+
+1.2
+0x00000100
+
+1.3
+3053
+
+1.4
+101111101101
+
+1.5
+0x00000008
+
+1.6 */
+void onesix(int input) {
+  printhex(0xFF000000 & input);
+}
+
+//1.7
+void oneseven(int input) {
+  printhex(0xFF0000FF & input);
+}
+
+/*1.8
+0x0000000A | 0x0000000C 
+  1010
+| 1100
+------
+  1110 = 0x0000000E
+
+1.9*/
+void onenine(int input) {
+  printhex(0xD4000000 | input);
+}
+
+//1.10
+void oneten(int input) {
+  printhex((0x00FFFFFF & input) | 0xD4000000);
+}
+
+/*1.11
+0x23456780
+
+1.12
+0x34567800
+
+1.13
+0x01234567
+
+1.14
+0xFE234567
+
+1.15
+0x12345678 >> 24
+
+1.16
+0x00000012 << 24
+
+1.17*/
+void oneseventeen(int input) {
+  printhex((input >> 24) & 0x000000FF);
+}
+
+//1.18
+void oneeighteen(int input) {
+  printhex((input >> 16) & 0x000000FF);
+}
+
+

@@ -1,0 +1,88 @@
+// ----------------------------------------------------------------------
+// QUEUE INTERFACE. DO NOT CHANGE
+
+typedef struct queue_header* queue;
+bool queue_empty(queue Q);      /* O(1) */
+queue queue_new()               /* O(1) */
+/*@ensures queue_empty(\result); @*/;       
+bool is_queue(struct queue_header* Q)       
+void enq(queue Q, string s)     /* O(1) */
+/*@ensures !queue_empty(Q);@*/;
+string deq(queue Q)               /* O(1) */
+/*@requires !queue_empty(Q);@*/;
+// ----------------------------------------------------------------------
+
+/* Implementation of queues goes here */
+
+struct queue_header {
+	list front;
+	list back;
+}
+
+bool is_queue(struct queue_header* Q)
+{
+	return (Q != NULL &&
+		Q->front != NULL &&
+		Q->back != NULL &&
+		Q->back->next == NULL
+		);
+}
+
+bool is_segment(list L1, list L2)
+{
+	for (list cur = L1; cur != NULL; cur = cur->next)
+	{
+		if (cur = L2) { return true; }
+	}
+
+	return false;
+}
+
+string deq(queue Q)
+//@requires is_queue(Q);
+//@ensures is_queue(Q);
+{
+	int result = Q->front->data;
+	Q->front = Q->front->next;
+	return result;
+}
+
+void enq(queue Q, string s)
+//@requires is_queue(Q);
+//@ensures is_queue(Q);
+{
+	Q->back->data = x;
+	Q->back->next = alloc(struct list_node); //note that it is a list_node and not a list/list_node*
+	Q->back = Q->back->next;
+}
+
+bool queue_empty(queue Q)
+//@requires is_queue(Q);
+{
+	return (Q->back == Q->front);
+}
+
+queue queue_new()
+//@ensures is_queue(\result);
+{
+	queue Q = alloc(struct queue_header);
+	Q->back = alloc(struct list_node);
+	Q->front = Q->back;
+	return Q;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

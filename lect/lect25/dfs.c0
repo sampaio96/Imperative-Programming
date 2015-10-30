@@ -1,0 +1,128 @@
+
+bool dfs (graph G, vertex start, vertex end)
+//@requires is_graph(G);
+//@requires graph_hasvertex(G,start);
+//@requires graph_hasvertex(G,end);
+{
+  
+  bool[] seen = alloc_array(bool, G->size); // all false
+
+  stack tovisit = stack_new(G->size);
+  
+  push(tovisit,start);
+  seen[start] = true;
+
+  while (! stack_empty(tovisit)) {
+
+    vertex cur = pop(tovisit);
+
+    if (cur == end) { return true; }
+    else {
+      for (adjlist* n = graph_neighbors(G,cur);
+           n != NULL;
+           n = n->next)
+        {
+          if (! seen[n->vert]) {
+            seen[n->vert] = true;
+            push(tovisit,n->vert);
+          }
+        }
+    }
+  }
+
+  return false;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool bfs (graph G, vertex start, vertex end)
+//@requires is_graph(G);
+//@requires 0 <= start && start < G->size;
+//@requires 0 <= end && end < G->size;
+{
+  
+  bool[] seen = alloc_array(bool, G->size); // all false
+
+  queue tovisit = queue_new(G->size*G->size);
+  
+  enq(tovisit,start);
+  seen[start] = true;
+
+  while (! queue_empty(tovisit)) {
+
+    vertex cur = deq(tovisit);
+
+    if (cur == end) { return true; }
+    else {
+      for (adjlist* n = graph_neighbors(G,cur);
+           n != NULL;
+           n = n->next)
+        {
+          if (! seen[n->vert]) {
+            seen[n->vert] = true;
+            enq(tovisit,n->vert);
+          }
+        }
+    }
+  }
+
+  return false;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+void test_search(){
+
+  graph G = graph_new(5);
+  int A = 0;
+  int B = 1;
+  int C = 2;
+  int D = 3;
+  int E = 4;
+  graph_addedge(G,A,B);
+  graph_addedge(G,A,E);
+  graph_addedge(G,B,A);
+  graph_addedge(G,B,E);
+  graph_addedge(G,B,C);
+  graph_addedge(G,C,B);
+  graph_addedge(G,C,E);
+  graph_addedge(G,C,D);
+  graph_addedge(G,D,C);
+  graph_addedge(G,E,A);
+  graph_addedge(G,E,B);
+  graph_addedge(G,E,C);
+
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 5; j++) {
+      assert (dfs(G,i,j));
+    }
+  }
+
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 5; j++) {
+      assert (bfs(G,i,j));
+    }
+  }
+
+}

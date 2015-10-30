@@ -1,0 +1,114 @@
+// interface
+
+typedef int vertex; // another design would be to hide that this is consecutive ints
+
+typedef struct graph_header* graph;
+
+typedef struct adjlist_node adjlist;
+
+struct adjlist_node {
+  vertex vert;
+  adjlist* next;
+};
+
+graph graph_new(int numvert)
+/*@ requires numvert >= 0; @*/; // New graph with numvert vertices
+
+int graph_size(graph G);  // Number of vertices in the graph
+
+bool graph_hasvertex(graph G, vertex v);
+
+bool graph_hasedge(graph G, vertex v, vertex w)
+/*@ requires graph_hasvertex(G,v) && graph_hasvertex(G,w); @*/;
+
+void graph_addedge(graph G, vertex v, vertex w)
+/*@ requires graph_hasvertex(G,v) && graph_hasvertex(G,w) &&
+             !graph_hasedge(G, v, w); @*/;
+
+/* Returns a linked list of the neighbors of vertex v. This adjacency
+   list is owned by the graph and should not be modified by the
+   user. */
+adjlist* graph_neighbors(graph G, vertex v)
+/*@ requires graph_hasvertex(G,v); @*/;
+
+
+// ----------------------------------------------------------------------
+
+struct graph_header {
+  int size;
+  adjlist*[] neighbors;
+};
+
+bool is_adjlist(adjlist* l, int size)
+//@requires size >= 0;
+{
+  // could also check for circularity
+
+  for (adjlist* cur = l; cur != NULL; cur = cur->next)
+    {
+      if (! (0 <= cur->vert && cur->vert < size)) {return false;}
+    }
+  return true;
+}
+
+bool is_graph(struct graph_header* G)
+{
+  if (G == NULL) {return false;}
+  if (!(G->size >= 0)) {return false;}
+  //@assert G->size == \length(G->neighbors);
+
+  for (int i = 0; i < G->size ; i = i + 1) {
+    if (! (is_adjlist(G->neighbors[i],G->size))) { return false; }
+  }
+
+  return true;
+}
+
+bool graph_hasvertex(graph G, vertex v) 
+//@requires is_graph(G);
+{
+  return (0 <= v && v < G->size);
+}
+
+graph graph_new(int numvert)
+//@ensures is_graph(\result);
+{
+  graph G = alloc(struct graph_header);
+  G->size = numvert;
+  G->neighbors = alloc_array(adjlist*,G->size);
+  return G;
+}
+
+int graph_size(graph G)
+//@requires is_graph(G);
+{
+  return G->size;
+}
+
+bool graph_hasedge(graph G, vertex v, vertex w)
+//@requires is_graph(G);
+{
+  for (adjlist* cur = G->neighbors[v]; cur != NULL; cur = cur->next) {
+    if (cur->vert == w) {return true;}
+  }
+  return false;
+}
+
+void graph_addedge(graph G, vertex v, vertex w)
+//@requires is_graph(G);
+//@ensures is_graph(G);
+{
+  
+  adjlist* new = alloc(adjlist);
+  new->vert = w;
+  new->next = G->neighbors[v];
+  G->neighbors[v] = new;
+
+}
+
+adjlist* graph_neighbors(graph G, vertex v)
+//@requires is_graph(G);
+{
+  return G->neighbors[v];
+}
+

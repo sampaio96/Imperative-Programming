@@ -1,0 +1,1 @@
+dup dup * 5 * third third swap dup dup * 3 * third third 2 * * + +

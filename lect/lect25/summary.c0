@@ -1,0 +1,30 @@
+computational thinking {
+	imperative programming
+	specification and verification
+	algorithm design and analysis
+}
+
+building blocks
+conceptual
+	loops
+	sortedness
+	randomness
+	divide in half
+concrete
+	(unbounded) arrays
+	searching
+	sorting
+	stacks/queues/priority queues
+	(doubly) linked lists
+	trees
+	graphs
+
+
+comp 212	functional programming, parallelism
+math 228	proofs, number theory, graphs
+comp 331	the machine
+comp 321	programming languages
+comp 312	algorithms and complexity
+comp 301	models and limits of computational
+
+electives:	software engineering, bioinformatics, artificial intelligence, proof assistants

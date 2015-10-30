@@ -1,0 +1,210 @@
+/* 
+ * Hash tables (fixed size)
+ * 
+ */
+
+#use <conio>
+#use <util>
+
+/******************************/
+/* client-side implementation */
+/******************************/
+
+typedef struct word_with_color* elem;
+typedef string key;
+
+struct word_with_color {
+  string word;
+  string color;
+};
+
+int hash(key k) { 
+  return hash_string(k);
+}
+
+bool key_equal(key k1, key k2) { 
+  return string_equal(k1, k2); 
+}
+
+key elem_key(elem e) 
+//@requires e != NULL;
+{
+  return e->word;
+}
+
+/*************************/
+/* client-side interface */
+/*************************/
+// typedef ______* elem;
+// typedef ______ key;
+
+int hash(key k);
+
+bool key_equal(key k1, key k2);
+
+key elem_key(elem e)
+//@requires e != NULL;
+  ;
+
+/**************************/
+/* library side interface */
+/**************************/
+// typedef _______ ht;
+
+typedef struct ht_header* ht;
+
+ht ht_new(int capacity)
+//@requires capacity > 0;
+  ;
+elem ht_lookup(ht H, key k);    /* O(1) avg. */
+void ht_insert(ht H, elem e)    /* O(1) avg. */
+//@requires e != NULL;
+  ;
+int ht_size(ht H);              /* O(1) */
+
+/*******************************/
+/* library-side implementation */
+/*******************************/
+
+typedef struct chain_node chain;
+struct chain_node {
+  elem data;     /* data != NULL */
+  chain* next;
+};
+
+struct ht_header {
+  int size;        /* size >= 0 */
+  int capacity;    /* capacity > 0 */
+  chain*[] table;  /* \length(table) == capacity */
+};
+
+bool is_chain(chain* l, int capacity, int expected_hash) {
+  
+  // FIXME also check for cycles
+
+  for (chain* cur = l; cur != NULL; cur = cur->next) {
+    if (cur->data == NULL) { return false; }
+    if (abs(hash(elem_key(cur->data)) % capacity) != expected_hash) {return false;}
+  }
+
+  return true;
+}
+bool is_ht(ht H) {
+  if (H == NULL) return false;
+  if (!(H->size >= 0)) return false;
+  if (!(H->capacity > 0)) return false;
+
+  for (int i = 0; i < H->capacity; i = i + 1) {
+    if (! is_chain(H->table[i],H->capacity,i)) { return false; }
+  }
+
+  return true;
+}
+
+ht ht_new(int capacity)
+//@requires capacity > 0;
+//@ensures is_ht(\result);
+{
+  ht H = alloc(struct ht_header);
+  H->size = 0;
+  H->capacity = capacity;
+  H->table = alloc_array(chain*, capacity);
+  /* initialized to NULL */
+  return H;
+}
+
+int ht_size(ht H) 
+//@requires is_ht(H);
+{
+  return H->size;
+}
+
+/* ht_lookup(H, k) returns NULL if key k not present in H */
+elem ht_lookup(ht H, key k)
+//@requires is_ht(H);
+{
+  int i = abs(hash(k) % H->capacity);
+  chain* p = H->table[i];
+  while (p != NULL)
+    //@ loop_invariant is_chain (p,H->capacity,i);
+    {
+      //@assert p->data != NULL;
+      if (key_equal(elem_key(p->data), k)) {
+        return p->data;
+      }
+      else {
+        p = p->next;
+      }
+    }
+  /* not in chain */
+  return NULL;
+}
+
+void ht_insert(ht H, elem e)
+//@requires is_ht(H);
+//@requires e != NULL;
+//@ensures is_ht(H);
+//@ensures ht_lookup(H, elem_key(e)) != NULL;
+{
+  key k = elem_key(e);
+  int i = abs(hash(k) % H->capacity);
+  chain* p = H->table[i];
+
+  // Either replace the element if it's there
+  while (p != NULL) 
+    //@ loop_invariant is_chain (p,H->capacity,i);
+    {
+      if (key_equal(k, elem_key(p->data))) {
+        p->data = e;
+        return;
+      }
+      p = p->next;
+    }
+
+  // Or add it to the chain
+  chain* newc = alloc(chain);
+  newc->data = e;
+  newc->next = H->table[i];
+  H->table[i] = newc;
+  H->size = H->size + 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+int chain_length(chain* p) {
+  int i = 0;
+  while (p != NULL) {
+    i++;
+    p = p->next;
+  }
+  return i;
+}
+// Debugging: report the distribution about the hashtable
+void ht_stats(ht H) 
+//@requires is_ht(H);
+{
+  int max = 0;
+  int[] A = alloc_array(int, 11);
+  for(int i = 0; i < H->capacity; i++) {
+    int j = chain_length(H->table[i]);
+    if (j > 9) A[10]++;
+    else A[j]++;
+    if (j > max) max = j;
+  }
+
+  println("Hash table distribution: how many chains have size... ");
+  for(int i = 0; i < 10; i++) {
+    print("..."); printint(i); print(":   "); printint(A[i]); print("\n");
+  }
+  print("...10+: "); printint(A[10]); print("\n");
+  print("Longest chain: "); printint(max); print("\n");
+}

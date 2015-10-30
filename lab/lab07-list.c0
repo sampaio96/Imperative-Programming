@@ -1,0 +1,46 @@
+
+#use <util>
+#use <conio>
+
+typedef string elem;
+
+typedef struct list_node* list;
+
+struct list_node {
+  elem data;
+  list next;
+};
+
+bool has_cycle(list start)
+{
+  // TASK
+  return false;
+}
+
+bool is_segment(list start, list end)
+//@requires start != NULL;
+//@requires end != NULL;
+{
+
+  // TASK change this to check for cycles
+
+  for (list cur = start; cur != NULL; cur = cur->next)
+    {
+      if (cur == end) { return true; }
+    }
+  return false;
+
+}
+
+void test_circular() {
+
+  list a = alloc(struct list_node);
+  a->data = "a";
+  a->next = alloc(struct list_node);
+  a->next->data = "b";
+  a->next->next = a;
+
+  assert(has_cycle(a) == true);
+
+}
+

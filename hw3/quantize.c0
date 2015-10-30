@@ -1,0 +1,75 @@
+/* Assumes that pixel is already defined to be an int (pixel.c0) */
+/* typedef int pixel; */
+
+#use <util>
+
+pixel quantize_pixel(pixel p, int q) 
+//@requires 0 <= q && q < 8;
+{
+ int red;
+ int green;
+ int blue;
+
+ red = p & 0xFFFF0000;
+ green = p & 0xFF00FF00;
+ blue = p & 0xFF0000FF;
+
+ red = red >> (16 + q);
+ red = red << (16 + q);
+ green = green >> (8+q);
+ green = green << (8+q);
+ blue = blue >> q;
+ blue = blue << q;
+
+ p = p & 0xFF000000;
+ p = p | red;
+ p = p | green;
+ p = p | blue;
+
+ return p;
+}
+
+void test_quantize() {
+  pixel p = quantize_pixel(0xFFFFFFFF, 4);
+  assert(p == 0xFFF0F0F0);
+
+  p = quantize_pixel(0xFAFBFCFD, 0);  
+  assert(p == 0xFAFBFCFD);
+
+  p = quantize_pixel(0xF1F2F3F4, 7);
+  assert(p == 0xF1808080);
+}
+
+pixel[] quantize (int q, pixel[] pixels, int width, int height)
+//@requires 0<=q && q<8;
+{
+  pixel[] B = alloc_array(pixel, width*height);
+ 
+  for (int i = 0; i < width*height; i++) {
+  B[i] = quantize_pixel(pixels[i], q);
+  }
+
+  return B;
+}
+
+
+
+/* Task 8
+-rw-r--r--  1 gsampaio  staff   2.5M Sep 26 19:11 images/gargoyle_quantize0.png
+-rw-r--r--  1 gsampaio  staff   2.6M Sep 26 19:11 images/gargoyle_quantize1.png
+-rw-r--r--  1 gsampaio  staff   2.1M Sep 26 19:11 images/gargoyle_quantize2.png
+-rw-r--r--@ 1 gsampaio  staff   1.6M Sep 26 19:11 images/gargoyle_quantize3.png
+-rw-r--r--  1 gsampaio  staff   1.3M Sep 26 19:11 images/gargoyle_quantize4.png
+-rw-r--r--  1 gsampaio  staff   909K Sep 26 19:11 images/gargoyle_quantize5.png
+-rw-r--r--@ 1 gsampaio  staff   492K Sep 26 19:11 images/gargoyle_quantize6.png
+-rw-r--r--@ 1 gsampaio  staff   215K Sep 26 19:11 images/gargoyle_quantize7.png
+*/
+
+
+
+
+
+
+
+
+

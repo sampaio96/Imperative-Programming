@@ -1,0 +1,118 @@
+#use <util>
+
+typedef string elem;
+
+// ----------------------------------------------------------------------
+/* Interface of unbounded arrays */
+
+// Arrays have a fixed capacity, which is chosen when you allocate one.  
+// An "unbounded array" is like an array, it supports an additional
+// operation: add a new element to the end of the array.
+// You can then 'get' and 'set' any positions that have been added.  
+
+typedef struct uba_header* uba;
+
+// because we can always uba_add elements later,
+// we can always start from a \length=0 array
+uba uba_new(int initial_limit)           /*"alloc_array(elem,0)"*/
+/*@requires initial_limit > 0; @*/;       
+ 
+int uba_size(uba L)                      /* "\length(L)" */
+/*@ensures \result >= 0;@*/;
+
+elem uba_get(uba L, int index)           /* "L[index]" */
+/*@ requires 0 <= index && index < uba_size(L);@*/; 
+
+void uba_set(uba L, int index, elem e)   /* "L[index] = e" */
+/*@requires 0 <= index && index < uba_size(L);@*/;
+
+void uba_add(uba L, elem e);             /* add e at the end of L */
+
+
+// ----------------------------------------------------------------------
+/* Implementation of unbounded arrays */
+
+/* The idea with the implementation is that we store an array A,
+   together with two numbers:
+   - the limit is the actual length of the underlying array A,
+     which may be bigger than the size seen from the client's perspective
+   - the size is the number of things in A from the client's perspective
+     (i.e. the number of things that have been added)
+*/
+
+struct uba_header {
+  int limit;                    /* 0 < limit */
+  int size;			/* 0 <= size && size <= limit */
+  elem[] A;			/* \length(A) == limit */
+};
+
+bool is_uba (uba L)
+{
+  if (L == NULL) {return false;}
+  if (!(0 <= L->size)) {return false;}
+  if (!(L->size <= L->limit)) {return false;}
+  if (!(0 < L->limit)) {return false;}
+  //@assert L->limit == \length(L->A);
+  return true;
+}
+
+uba uba_new (int initial_limit) 
+//@ensures is_uba(\result);
+{
+  uba L = alloc(struct uba_header);
+  L->limit = initial_limit;
+  L->size = 0;
+  L->A = alloc_array(elem, L->limit);
+  return L;
+}
+
+int uba_size(uba L)
+//@requires is_uba(L);
+{
+  return L->size;
+}
+
+elem uba_get(uba L, int index)
+//@requires is_uba(L);
+{
+  return L->A[index];
+}
+
+void uba_set(uba L, int index, elem e)
+//@requires is_uba(L);
+{
+  L->A[index] = e;
+  return;
+}
+
+/* uba_resize(L, new_limit) resizes L to new_limit */
+/* copies old values between 0 and L->size to new array */
+void uba_resize(uba L, int new_limit)
+//@requires is_uba(L);
+//@requires L->size < new_limit;
+//@ensures is_uba(L);
+//@ensures L->limit == new_limit;
+// ensures size is unchanged
+//@ensures L->size < L->limit;
+{
+  elem[] B = alloc_array(elem, new_limit);
+  for (int i = 0; i < L->size; i=i+1)
+    //@loop_invariant 0 <= i && i <= L->size;
+    {
+      B[i] = L->A[i];
+    }
+  L->limit = new_limit;
+  L->A = B;
+}
+
+void uba_add(uba L, elem e)
+//@requires is_uba(L);
+//@ensures is_uba(L);
+{
+  if (L->size == L->limit) {
+    uba_resize(L, L->limit+1);
+  }
+
+  L->A[L->size] = e;
+  L->size=L->size+1;
+}

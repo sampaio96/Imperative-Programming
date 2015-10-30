@@ -1,0 +1,99 @@
+// WARNING: this is just the contracts part for your reference;
+// it does not include the HW solutions, so it doesn't actually load
+
+#use <string>
+#use <conio>
+#use <util>
+
+string array_to_string(char[] C, int length)
+//@requires \length(C) == length;
+//@ensures string_length(\result) == \length(C);
+{
+
+  string s = "";
+
+  for (int letter = 0; letter < length; letter = letter + 1){
+    s = string_join(s, string_fromchar(C[letter]));
+  }
+  return s; 
+
+}
+
+char[] string_to_array(string s)
+//@ensures \length(\result) == string_length(s);
+{
+  int length = string_length(s);
+  char[] C = alloc_array(char,length);
+  for (int letter = 0; letter < length; letter = letter + 1){
+    C[letter] = string_charat(s,letter);
+  }
+  return C; 
+
+}
+
+void print_strings(string[] strings, int length)
+//@requires \length(strings) == length;
+{
+  for (int i = 0; i < length; i = i + 1) {
+    print(string_fromint(i));
+    print(": ");
+    println(strings[i]);
+  }
+}
+
+
+
+
+
+
+
+char encrypt_char(char input, int shift) 
+//@requires 'a' <= input && input <= 'z';
+//@requires 0 <= shift && shift < 26;
+//@ensures 'a' <= \result && \result <= 'z';
+{
+  ...
+}
+
+bool all_letters(char[] message, int message_length)
+//@requires \length(message) == message_length;
+{
+  for(int i = 0; i < message_length; i = i + 1) {
+    if (! ( 'a' <= message[i] && message[i] <= 'z' )) {
+      return false;
+    }
+  }
+  return true;
+}
+
+void encrypt(char[] message, int message_length, int shift)
+//requires each character in message has to be between 'a' and 'z'
+//@requires \length(message) == message_length;
+//@requires all_letters(message,message_length);
+//@requires 0 <= shift && shift < 26;
+//@ensures all_letters(message,message_length);
+{
+  ...
+}
+
+string encrypt_string(string message, int shift)
+//@requires 0 <= shift && shift < 26;
+//@requires all_letters(string_to_array(message),string_length(message)); 
+//@ensures all_letters(string_to_array(\result),string_length(\result)); 
+{
+  ...
+}
+
+string decrypt_string(string message, int shift)
+//@requires 0 <= shift && shift < 26;
+//@requires all_letters(string_to_array(message),string_length(message)); 
+//@ensures all_letters(string_to_array(\result),string_length(\result)); 
+{
+  ...
+} 
+
+string[] possible_decryptions(string message)
+//@ensures all_letters(string_to_array(\result),string_length(\result)); 
+{
+  ...
+}

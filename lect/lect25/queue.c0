@@ -1,0 +1,70 @@
+/* Interface to queues of strings */
+
+typedef struct queue_header* queue;
+
+bool queue_empty(queue Q);      /* O(1) */
+queue queue_new(int capacity)  /* O(1) */
+/*@requires capacity >= 0; @*/              
+/*@ensures queue_empty(\result); @*/;              
+
+void enq(queue Q, elem s)     /* O(1) */
+/*@ensures !queue_empty(Q);@*/;
+
+elem deq(queue Q)               /* O(1) */
+/*@requires !queue_empty(Q);@*/;
+
+
+/* Implementation of queues */
+
+struct queue_header {
+  elem[] data;
+  int front;
+  int back;
+  int capacity;
+};
+
+bool is_queue(queue Q)
+{
+  // we'll talk about NULL on Thursday; students don't need to write this
+  if (Q == NULL) return false;
+
+  //@assert \length(Q->data) == Q->capacity;
+  return ((Q->front >= 0 && Q->front < Q->capacity) &&
+          (Q->back >= 0 && Q->back < Q->capacity));
+}
+
+bool queue_empty(queue Q)
+//@requires is_queue(Q);
+{
+  return Q->front == Q->back;
+}
+
+queue queue_new(int capacity)
+//@ensures is_queue(\result);
+{
+  queue Q = alloc(struct queue_header);
+  Q->front = 0;
+  Q->back = 0;
+  Q->capacity = capacity;
+  Q->data = alloc_array(elem, Q->capacity);
+  return Q;
+}
+
+void enq(queue Q, elem e)
+//@requires is_queue(Q);
+//@ensures is_queue(Q);
+{
+  if (Q->back+1 == Q->capacity) error("queue overflow");
+  Q->data[Q->back] = e;
+  Q->back = Q->back + 1;
+}
+
+elem deq(queue Q)
+//@requires is_queue(Q);
+//@ensures is_queue(Q);
+{
+  elem e = Q->data[Q->front];
+  Q->front++;                 // this leaves wasted space in array
+  return e;
+}
+           

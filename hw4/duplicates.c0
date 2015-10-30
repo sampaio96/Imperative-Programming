@@ -1,0 +1,153 @@
+
+#use <string>
+
+bool all_distinct(string[] A, int n) 
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A,0,n);
+{
+  for (int i = 0; i < n-1; i ++)
+  {
+    if (string_equal(A[i],A[i+1])) { return false; }
+  }
+  return true;
+}
+
+
+void test_all_distinct() {
+  string[] t = alloc_array(string,4);
+  t[0] = "a";
+  t[1] = "b";
+  t[2] = "c";
+  t[3] = "d";
+
+  assert (all_distinct(t,4));
+
+  t[1] = "c";
+
+  assert (!all_distinct(t,4));
+
+  t[1] = "a";
+  
+  assert (!all_distinct(t,4));
+
+  t[1] = "b";
+  t[2] = "d";  
+
+  assert (!all_distinct(t,4));
+
+  t[3] = "d";
+
+  assert (all_distinct(t,3));
+
+}
+
+int count_distinct(string[] A , int n) 
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A,0,n);
+//@ensures 0 <= \result && \result <= n;
+{
+  int count = 1;
+  for (int i = 0; i < n-1; i ++)
+  {
+    if (!string_equal(A[i],A[i+1])) { count ++; }
+  }
+return count; // you need to edit this line
+}
+
+void test_count_distinct() {
+  string[] A = alloc_array(string,8);
+  A[0] = "apple";
+  A[1] = "apple";
+  A[2] = "apple";
+  A[3] = "banana";
+  A[4] = "orange";
+  A[5] = "orange";
+  A[6] = "pear";
+  A[7] = "tomato";
+
+  assert ((count_distinct(A,8))==5);
+
+  string[] B = alloc_array(string,8);
+  B[0] = "apple";
+  B[1] = "banana";
+  B[2] = "banana";
+  B[3] = "orange";
+  B[4] = "orange";
+
+  assert ((count_distinct(B,5))==3);
+}
+
+
+string[] remove_duplicates(string[] A, int n) 
+//@requires 0 <= n && n <= \length(A);
+//@requires is_sorted(A,0,n);
+//@ensures is_sorted(\result,0,count_distinct(A,n));
+//@ensures \length(\result) == count_distinct(A,n);
+//@ensures 0 < \length(\result) && \length(\result) <= \length(A);
+//@ensures all_distinct(\result,\length(\result));
+//@ensures is_sorted(\result,0,\length(\result));
+{
+  string[] result = alloc_array(string, count_distinct(A,n));
+  int a = 0;
+  for (int i = 0; i < n-1; i ++)
+  //@loop_invariant 0 <= i && i <= n-1;
+  //@loop_invariant is_sorted(result,0,a);
+  //@loop_invariant a < count_distinct(A,n);
+  {
+    if (!string_equal(A[i], A[i+1])) {
+      result[a] = A[i]; 
+      a++;
+    }
+  }
+  result[a] = A[n-1];
+  return result;
+}
+
+void test_remove_duplicates() {
+  string[] A = alloc_array(string,8);
+  A[0] = "apple";
+  A[1] = "apple";
+  A[2] = "apple";
+  A[3] = "banana";
+  A[4] = "orange";
+  A[5] = "orange";
+  A[6] = "pear";
+  A[7] = "tomato";
+
+  string[] B = alloc_array(string,5);
+  B[0] = "apple";
+  B[1] = "banana";
+  B[2] = "orange";
+  B[3] = "pear";
+  B[4] = "tomato";
+
+  string[] C = remove_duplicates(A,8);
+
+  for (int i = 0; i < 5; i ++)
+  {
+    assert (string_equal(C[i], B[i]));
+  }
+
+  string[] D = alloc_array(string,8);
+  D[0] = "apple";
+  D[1] = "apple";
+  D[2] = "apple";
+  D[3] = "banana";
+  D[4] = "orange";
+  D[5] = "orange";
+  D[6] = "pear";
+  D[7] = "pear";
+
+  string[] E = alloc_array(string,4);
+  E[0] = "apple";
+  E[1] = "banana";
+  E[2] = "orange";
+  E[3] = "pear";
+
+  string[] F = remove_duplicates(A,8);
+
+  for (int i = 0; i < 4; i ++)
+  {
+    assert (string_equal(F[i], E[i]));
+  }
+}

@@ -1,0 +1,19 @@
+#use <util>
+
+pixel[] rotate90 (pixel[] A, int width, int height)
+//@requires width == height;
+{
+
+  pixel[] B = alloc_array(pixel, width*height); {
+
+for (int row = 0; row < height; row ++) {
+	for (int col = 0; col < width; col ++)
+	{
+	int m = row*width+col;
+	B[m] = A[(height-col-1)*height+row];
+	}
+}
+  }
+
+  return B;
+}

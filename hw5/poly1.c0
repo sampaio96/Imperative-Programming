@@ -1,0 +1,32 @@
+#use <string>
+#use <parse>
+#use <conio>
+#use <args>
+#use <util>
+
+bool eval(string x, stack S)
+{
+  print("Read: "); print(x); print("\n");
+
+  if (string_equal(x, "quit")) {
+    return false;
+  }
+
+  else {
+    /* not defined as an operation name, should be an int */
+    int* p = parse_int(x, 10);
+    if (p == NULL) { /* not an int */
+      /* call error(msg) which prints msg and aborts */
+      error(string_join("undefined operation ", x));
+    }
+    push(S, *p * *p + 2 * *p + 1);
+
+  }
+
+  return true;                  /* continue */
+}
+
+bool always_enough(string[] ops, int ops_size, int start_size)
+{
+  return true;
+}

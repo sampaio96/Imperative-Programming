@@ -1,0 +1,22 @@
+/*
+ * Hash function on strings
+ *
+ * Principles of Imperative Computation
+ */
+
+#use <rand>
+#use <string>
+
+int hash_string(string s)
+{
+  int len = string_length(s);
+  int h = 0;                                   /* empty string maps to 0 */
+  for (int i = 0; i < len; i=i+1)
+    //@loop_invariant 0 <= i;
+    {
+      // as if the random number generator gave back the numbers 0...len in order
+      h = i*h + char_ord(string_charat(s, i)); 
+    }
+
+  return h;
+}

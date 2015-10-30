@@ -1,0 +1,172 @@
+#use <util>
+#use <conio>
+
+typedef struct list_node* list;
+
+struct list_node {
+  int data;
+  list next;
+};
+
+
+int length(list l) 
+{
+  int len = 0;
+
+  while (l != NULL) {
+    len = len + 1;
+    l = l->next;
+  }
+
+  return len;
+
+}
+
+//O(n)
+int length2(list l) 
+{
+  int len = 0;
+
+  for (list cur = l; cur != NULL; cur = cur->next) {
+    len = len + 1;
+  }
+
+  return len;
+}
+
+int sum_list(list l) 
+{
+  int sum = 0;
+  for (list cur = l; cur != NULL; cur = cur->next) {
+    sum = sum + cur->data;
+  }
+  return sum;
+}
+
+
+
+//like A[k], but O(k) instead of constant time
+
+// get_number(l,0) should return l->data
+// get_number(l,1) should return l->next->data
+// get_number(l,2) should return l->next->next->data
+
+int get_number(list l, int k)
+//@requires 0 <= k && k < length(l);
+// ensures that the contents of l are the same afterwards
+{
+
+  for (int i = 0; i < k; i = i + 1)
+    //@ loop_invariant length(l) > (k - i);
+    //@ loop_invariant 0 <= i;
+    {
+      //@assert l != NULL;
+      l = l -> next;
+    }
+
+  //@assert l != NULL;
+  return l->data;
+
+}
+
+// like A[k] = new_value, but O(k) instead of constant time
+void set_number(list l, int k, int new_value)
+//@requires 0 <= k && k < length(l);
+// ensures that the contents of l are the same afterwards
+{
+
+  for (int i = 0; i < k; i = i + 1)
+    //@ loop_invariant length(l) > (k - i);
+    //@ loop_invariant 0 <= i;
+    {
+      //@assert l != NULL;
+      l = l -> next;
+    }
+
+  //@assert l != NULL;
+  l->data = new_value;
+
+}
+
+list get_node(list l, int k)
+//@requires 0 <= k && k < length(l);
+{
+  for (int i = 0; i < k; i = i + 1)
+    //@loop_invariant length(l) > (k - i);
+    {
+      l = l->next;
+    }
+  
+  return l;
+}
+
+int get_number2(list l, int k)
+//@requires 0 <= k && k < length(l);
+{
+  list kth_node = get_node(l,k);
+  return kth_node->data;
+}
+
+void set_number2(list l, int k, int new_value)
+//@requires 0 <= k && k < length(l);
+{
+  list kth_node = get_node(l,k);
+  kth_node->data = new_value;
+}
+
+// O(k) if you have to get the node, but constant time to do the actual insert
+void insert_after(list l, int k, int new_data) 
+//@requires 0 <= k && k < length(l);
+{
+  list before = get_node(l,k);
+  list new_node = alloc(struct list_node);
+  new_node->data = new_data;
+  new_node->next = before->next;
+  before->next = new_node;
+}
+
+string show_list(list l) {
+  string s = "";
+  for (list cur = l; cur != NULL; cur = cur->next){
+    if (cur != l) {
+      s = string_join(s,",");
+    } 
+    s = string_join(s,string_fromint(cur->data));
+  }
+  return s;
+}
+
+void test() {
+
+  list a = alloc(struct list_node);
+  a->data = 1;
+  a->next = alloc(struct list_node);
+  a->next->data = 2;
+  a->next->next = alloc(struct list_node);
+  a->next->next->data = 3;
+  a->next->next->next = NULL;
+
+  assert (length2(a) == 3);
+
+  assert (get_number(a,0) == 1);
+  assert (get_number(a,1) == 2);
+  assert (get_number(a,2) == 3);
+
+  assert (get_number2(a,0) == 1);
+  assert (get_number2(a,1) == 2);
+  assert (get_number2(a,2) == 3);
+
+  set_number(a,0,3);
+  set_number(a,1,4);
+  set_number2(a,2,5);
+
+  assert (string_equal(show_list(a), "3,4,5"));
+
+  insert_after(a,0,6);
+  insert_after(a,2,7);
+  insert_after(a,4,8);
+  
+  assert (string_equal(show_list(a),"3,6,4,7,5,8"));
+
+}
+

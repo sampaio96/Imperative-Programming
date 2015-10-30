@@ -1,0 +1,116 @@
+/*
+ * Clac, stack-based calculator language
+ *
+ * Principles of Imperative Computation
+ */
+
+#use <string>
+#use <parse>
+#use <conio>
+#use <args>
+#use <util>
+
+/* Return true: clac top-level interpreter will expect more input */
+/* Return false: clac top-level interpreter will exit */
+bool eval(string op, stack S)
+//requires that there are enough numbers on S to perform the operation 'op'
+{
+  print("Read: "); print(op); print("\n");
+
+  if (string_equal(op, "quit")) {
+    return false;
+  }
+
+  else if (string_equal(op,"+")) {
+    int x = pop(S);
+    int y = pop(S);
+    push(S, x + y);
+  }
+
+  else if (string_equal(op,"*")) {
+    int x = pop(S);
+    int y = pop(S);
+    push(S, x * y);
+  }
+
+  else if (string_equal(op,"drop")) {
+    pop(S);
+  }
+
+  else if (string_equal(op,"swap")) {
+    int x = pop(S);
+    int y = pop(S);
+    push(S, x);
+    push(S, y);
+  }
+
+  else if (string_equal(op,"dup")) {
+    int x = pop(S);
+    push(S, x);
+    push(S, x);
+  }
+
+  else if (string_equal(op,"third")) {
+    int x = pop(S);
+    int y = pop(S);
+    int z = pop(S);
+    push(S, y);
+    push(S, x);
+    push(S, z);
+  }
+
+  else {
+    /* not defined as an operation name, should be an int */
+    int* p = parse_int(op, 10);
+    if (p == NULL) { /* not an int */
+      /* call error(msg) which prints msg and aborts */
+      error(string_join("undefined operation ", op));
+    }
+    push(S, *p);
+
+  }
+  
+  return true;                  /* continue */
+}
+
+
+
+// BONUS TASK
+bool always_enough(string[] ops, int ops_size, int start_size)
+{
+  int size = start_size;
+  for(int i = 0; i < ops_size; i = i + 1) {
+     string last = ops[i];
+
+     if (string_equal(last, "+")) {
+       if (size >= 2) { size = size - 1;}
+       else { return false; }
+     }
+     if (string_equal(last, "*")) {
+       if (size >= 2) { size = size - 1;}
+       else { return false; }
+     }
+     else if (string_equal(last, "drop")) {
+        if (size >= 1) {size = size - 1;}
+        else { return false; }
+     }
+     else if (string_equal(last, "swap")) {
+       if (size >= 2) {}
+       else { return false; }
+     }
+     else if (string_equal(last, "dup")) {
+        if (size >= 1) {size = size + 1;}
+        else { return false; }
+     }
+     else if (string_equal(last, "third")) {
+       if (size >= 3) {}
+       else { return false; }
+     }
+     
+     else if (string_equal(last, "quit")) {}
+     
+     else { size = size + 1; }
+  }
+
+  return true;
+}

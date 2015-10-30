@@ -1,0 +1,84 @@
+bool is_sorted(int[] A, 
+               int lower, 
+               int upper)
+/*@requires 0 <= lower 
+         && lower <= upper 
+         && upper <= \length(A); @*/
+{
+  for(int i = lower; i < upper-1; i++)
+    //@loop_invariant lower <= i;
+    {
+      if(!(A[i+1] >= A[i])) return false;
+    }
+
+  return true;
+}
+
+void swap(int[] A, int i, int j)
+//@requires 0 <= i && i < \length(A);
+//@requires 0 <= j && j < \length(A);
+{
+  int tmp = A[i];
+  A[i] = A[j];
+  A[j] = tmp;
+}
+
+bool ge_seg(int x, int[] A, int lower, int upper) 
+/*@requires 0 <= lower 
+         && lower <= upper 
+         && upper <= \length(A); @*/
+{
+  for (int i = lower; i < upper; i++) 
+    //@loop_invariant lower <= i && i <= upper;
+    {
+      if (!(x >= A[i])) return false;
+    }
+
+  return true;
+}
+
+bool le_seg(int x, int[] A, int lower, int upper) 
+/*@requires 0 <= lower 
+         && lower <= upper 
+         && upper <= \length(A); @*/
+{
+  for (int i = lower; i < upper; i++) 
+    //@loop_invariant lower <= i && i <= upper;
+    {
+      if (!(x <= A[i])) return false;
+    }
+
+  return true;
+}
+
+// use A[lower] as the pivot
+int partition(int[] A, int lower, int upper) 
+//@requires 0 <= lower && lower < upper && upper <= \length(A);
+//@ensures lower <= \result && \result < upper;
+//@ensures ge_seg(A[\result], A, lower, \result);
+//@ensures le_seg(A[\result], A, \result, upper);
+{
+  // bounds of what's left to partition
+  int left = lower+1; 
+  int right = upper;
+
+  while (left < right)
+    //@loop_invariant lower < left && left <= right && right <= upper;
+    //@loop_invariant ge_seg(A[lower], A, lower+1, left); 
+    //@loop_invariant le_seg(A[lower], A, right, upper); 
+    {
+      int pivot = A[lower];
+      if (pivot >= A[left]) 
+        {
+          left = left + 1;
+        }
+      else {
+        //@assert pivot < A[left];
+        swap(A,left,right-1);
+        right = right - 1;
+      }
+    }
+  swap(A,lower,left-1);
+  return left-1;  
+}
+

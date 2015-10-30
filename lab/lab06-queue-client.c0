@@ -1,0 +1,72 @@
+#use <string>
+
+
+struct queue_header* queue {
+  string[] data;
+  int front;
+  int back;
+}
+
+queue queue_new() {
+  queue Q = alloc(struct queint front;ue_header);
+  Q->data = alloc_array(1000, string);
+  Q->front = -1;
+  Q->back = -1;
+}
+
+bool is_queue(queue Q) {
+  //@assert \length(Q->data) == 1000;
+  return (-1 <= Q->front && Q->front < 1000 && -1 <= Q->back && Q->back < 1000);
+}
+
+bool queue_empty(queue Q) {
+  return (Q->front === Q->back);
+}
+
+// void enq(string s, queue Q) {
+//   if (Q->front + 1 != 1000) {
+//     Q->front ++;
+//   }
+//   else if {
+//     Q->front = 0;
+//   }
+//   else if ((Q->front + 1 = Q->back) || (Q->front + 1 = 1000 && Q->back = -1) || (Q->front + 1 = 1000 && Q->back = 0) {
+//       deq(Q);
+//       Q->front ++
+//   }
+  
+//     Q->data[Q->front] = s;
+// }
+
+void deq(queue Q) {
+  if (Q->back == Q->top) { }
+  else if (Q->back + 1 != 1000) {
+    Q->back ++;
+  }
+  else {
+    Q->back = 0;
+  }
+}
+void test_queue() {
+
+  queue Q = queue_new();
+
+  assert (queue_empty(Q));
+
+  enq(Q,"who");
+
+  assert (! queue_empty(Q));
+
+  enq(Q,"nose");
+
+  assert (! queue_empty(Q));
+
+  string s1 = deq(Q);
+  assert (string_equal(s1,"who"));
+
+  string s2 = deq(Q);
+  assert (string_equal(s2,"nose"));
+
+}
+
+

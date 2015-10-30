@@ -1,0 +1,84 @@
+/* 
+ * Stacks
+ * 
+ * Principles of Imperative Computation */
+
+/*** Interface ***/
+
+// typedef _______ stack;
+struct stack_header {
+	list start;
+	list end;
+};
+
+typedef struct stack_header* stack;
+
+bool stack_empty(stack S);      /* O(1) */
+
+stack stack_new()               /* O(1) */
+/*@ensures stack_empty(\result);@*/;
+
+void push(stack S, elem x)     /* O(1) */
+/*@ensures !stack_empty(S);@*/;
+
+elem pop(stack S)               /* O(1) */
+/*@requires !stack_empty(S); @*/ ;
+
+int stack_length(stack S)               /* O(1) */
+/*@requires !stack_empty(S); @*/ ;
+
+/*** Implementation ***/
+
+bool is_stack(stack S)
+//@requires !has_cycle(S->start);
+//@ensures !has_cycle(S->start);
+{
+	if (S == NULL) return false;
+	if (S->start == NULL) return false;
+	if (S->end == NULL) return false;
+	if (!is_segment(S->start, S->end)) return false;
+	return true;
+}
+
+bool stack_empty(stack S)
+//@requires is_stack(S);
+{
+	return (S->start == S->end);
+}
+
+stack stack_new()
+//@ensures is_stack(\result);
+//@ensures stack_empty(\result);
+{
+	stack S = alloc(struct stack_header);
+	S->start = alloc(struct list_node);
+	S->end = S->start;
+	return S; 
+}
+
+void push(stack S, elem x)  
+//@ensures is_stack(\result);
+{
+	list L = alloc(struct list_node);
+	S->end = x;
+	S->end->next = L;
+	S->end = L;
+}
+
+elem pop(stack S)
+//@ensures is_stack(\result);
+//@ensures !stack_empty(S);
+{
+	
+	return 
+}
+
+int stack_length(stack S)
+{
+	int counter = 0;
+	for (list cur = start; cur != end; cur = cur->next)
+	{
+		counter += 1;
+	}
+	return counter;
+}
